@@ -1,16 +1,13 @@
-from flask import Flask, render_template, jsonify
+from flask import Flask
+from routes.api import api_bp
+from routes.web import web_bp
 
 app = Flask(__name__)
 
-@app.route("/")
-def index():
-    return render_template("index.html")
+# Register blueprint for routes
+app.register_blueprint(web_bp)
+app.register_blueprint(api_bp, url_prefix="/api")
 
-@app.route("/api/upload")
-def upload():
-    return jsonify({
-        "status": True
-    })
 
 if __name__ == "__main__":
     app.run(debug=True)
