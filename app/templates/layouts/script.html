@@ -1,0 +1,184 @@
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const sidebar = document.getElementById('sidebar');
+        const sidebarToggle = document.getElementById('sidebarToggle');
+        const notificationButton = document.getElementById('notificationButton');
+        const notificationDropdown = document.getElementById('notificationDropdown');
+        const header = document.querySelector('header');
+
+        // Sidebar toggle event
+        if (sidebar && sidebarToggle) {
+            sidebarToggle.addEventListener('click', () => {
+                sidebar.classList.toggle('-translate-x-full');
+                adjustHeaderWidth();
+            });
+        }
+
+        // Adjust header width based on screen size
+        function adjustHeaderWidth() {
+            if (window.innerWidth >= 1024) {
+                header.style.marginLeft = '16rem';
+                header.style.width = `calc(100% - 16rem)`;
+            } else {
+                header.style.marginLeft = '0';
+                header.style.width = '100%';
+            }
+        }
+
+        // Window resize event
+        window.addEventListener('resize', adjustHeaderWidth);
+        adjustHeaderWidth();
+
+        // Notification button and dropdown logic
+        if (notificationButton && notificationDropdown) {
+            notificationButton.addEventListener('click', (event) => {
+                event.stopPropagation();
+                notificationDropdown.classList.toggle('hidden');
+                notificationDropdown.classList.toggle('scale-95');
+                notificationDropdown.classList.toggle('opacity-0');
+            });
+
+            window.addEventListener('click', (event) => {
+                if (!notificationDropdown.classList.contains('hidden') &&
+                    !notificationDropdown.contains(event.target) &&
+                    !notificationButton.contains(event.target)) {
+                    notificationDropdown.classList.add('hidden');
+                    notificationDropdown.classList.add('scale-95');
+                    notificationDropdown.classList.add('opacity-0');
+                }
+            });
+        }
+    });
+</script>
+<script>
+    const imageInput = document.getElementById('imageInput');
+    const imagePreview = document.getElementById('imagePreview');
+    const dropzoneText = document.getElementById('dropzoneText');
+    const previewWrapper = document.getElementById('previewWrapper');
+    const analyzeBtnWrapper = document.getElementById('analyzeBtnWrapper');
+    const dropzone = document.getElementById('dropzone');
+
+    imageInput.addEventListener('change', handleFile);
+
+    function handleDrop(event) {
+        event.preventDefault();
+        const file = event.dataTransfer.files[0];
+        if (file && file.type.startsWith('image/')) {
+            previewImage(file);
+        }
+        dropzone.classList.remove('bg-indigo-100');
+    }
+
+    function handleFile(e) {
+        const file = e.target.files[0];
+        if (file && file.type.startsWith('image/')) {
+            previewImage(file);
+        }
+    }
+
+    function previewImage(file) {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+            imagePreview.src = e.target.result;
+            previewWrapper.classList.remove('hidden');
+            dropzoneText.classList.add('hidden');
+            analyzeBtnWrapper.classList.remove('hidden');
+        };
+        reader.readAsDataURL(file);
+    }
+
+    function removeImage(event) {
+        event.preventDefault();
+        imagePreview.src = '';
+        previewWrapper.classList.add('hidden');
+        analyzeBtnWrapper.classList.add('hidden');
+        dropzoneText.classList.remove('hidden');
+        imageInput.value = '';
+    }
+
+    async function startAnalysis() {
+        const file = imageInput.files[0];
+        const analyzeBtn = document.querySelector('#analyzeBtnWrapper button:last-child');
+
+        if (!file) {
+            alert("Please select an image.");
+            return;
+        }
+
+        // Show loading state
+        const originalContent = analyzeBtn.innerHTML;
+        analyzeBtn.disabled = true;
+        analyzeBtn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Analyzing...`;
+
+        const formData = new FormData();
+        formData.append('image', file);
+
+        try {
+            const response = await fetch('/upload', {
+                method: 'POST',
+                body: formData
+            });
+
+            if (response.redirected) {
+                window.location.href = response.url;
+            } else {
+                const result = await response.text();
+                alert('Upload failed: ' + result);
+            }
+        } catch (error) {
+            console.error('Upload error:', error);
+            alert('Something went wrong while uploading.');
+        } finally {
+            // Restore button state if not redirected
+            analyzeBtn.disabled = false;
+            analyzeBtn.innerHTML = originalContent;
+        }
+    }
+
+</script>
+
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const messageEl = document.getElementById('message');
+    const fullText = messageEl.dataset.message.trim();
+    const isStreamed = messageEl.dataset.streamed === 'false';
+
+    if (isStreamed) {
+        const textNode = document.createTextNode('');
+        const cursor = document.createElement('span');
+        cursor.className = 'blinking-cursor';
+        cursor.textContent = '|';
+
+        messageEl.innerHTML = '';
+        messageEl.appendChild(textNode);
+        messageEl.appendChild(cursor);
+
+        let i = 0;
+        function streamText() {
+            if (i < fullText.length) {
+                textNode.textContent += fullText[i++];
+                messageEl.scrollIntoView({ behavior: 'smooth', block: 'end' });
+                setTimeout(streamText, Math.random() * 20 + 10);
+            } else {
+                cursor.remove();
+                fetch(`/mark_streamed/{{ cid }}`);
+            }
+        }
+
+        setTimeout(streamText, 300);
+    }
+});
+</script>
+
+<style>
+.blinking-cursor {
+    display: inline-block;
+    animation: blink 1s steps(2, start) infinite;
+    margin-left: 2px;
+}
+@keyframes blink {
+    0%, 100% { opacity: 0; }
+    50% { opacity: 1; }
+}
+</style>

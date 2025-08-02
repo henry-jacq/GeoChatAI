@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    {% include "layouts/head.html" %}
+
+    <body class="bg-lightGray font-sans leading-relaxed">
+
+        <div class="flex h-screen">
+
+            {% include "layouts/sidebar.html" %}
+            
+            <!-- Contents Area -->
+            <div class="flex-1 flex flex-col lg:ml-64">
+                <!-- Admin header -->
+                <header
+                    class="flex items-center justify-between p-[13px] px-6 bg-white border-b fixed top-0 left-0 w-full z-30"
+                    style="margin-left: 16rem; width: calc(100% - 16rem);">
+                    <!-- Breadcrumb -->
+                    <div class="text-sm text-gray-600">Fine tuned on LLaMA 3.2-11B-Vision-Instruct</div>
+
+                    <!-- Actions -->
+                    <div class="flex items-center space-x-4">
+                        <!-- Sidebar Toggle Button -->
+                        <button id="sidebarToggle"
+                            class="p-2 text-gray-600 transition duration-200 rounded-lg hover:bg-gray-100 lg:hidden">
+                            <i class="fas fa-bars"></i>
+                        </button>
+
+                        <!-- Logout Button using anchor tag -->
+                        <a href="{{ url_for('main.logout') }}"
+                            class="inline-flex items-center p-2 text-gray-600 transition duration-200 rounded-lg hover:bg-gray-100">
+                            <i class="mr-2 fas fa-sign-out-alt"></i>
+                            Logout
+                        </a>
+                    </div>
+                </header>
+                <main class="flex-1 px-6 py-2 mt-20 overflow-y-auto">
+                    {% block content_area %}{% endblock %}
+                </main>
+            </div>
+        </div>
+        {% include "layouts/script.html" %}
+    </body>
+
+</html>

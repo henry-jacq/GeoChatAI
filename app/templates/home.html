@@ -1,0 +1,53 @@
+{% extends "layouts/base.html" %}
+
+{% block content_area %}
+<section class="p-6 mb-10">
+    <div class="p-3 space-y-4">
+        <h2 class="text-3xl font-bold text-gray-800 mb-2">Welcome to GeoChatAI</h2>
+        <p class="text-lg text-gray-600">Upload aerial or satellite imagery and interact with an AI assistant specialized in geospatial powered by LLaMA 3.2-11B-Vision-Instruct.</p>
+    </div>
+    <div class="p-3 mt-6">
+        <div id="dropzone" class="relative w-full h-[300px] border-2 border-dashed border-indigo-300 rounded-xl flex items-center justify-center bg-indigo-50 hover:bg-indigo-100 transition cursor-pointer overflow-hidden"
+            onclick="imageInput.click()"
+            ondragover="event.preventDefault(); this.classList.add('bg-indigo-100')"
+            ondragleave="event.preventDefault(); this.classList.remove('bg-indigo-100')"
+            ondrop="handleDrop(event)">
+    
+            <!-- Dropzone Text -->
+            <div id="dropzoneText" class="text-center text-indigo-600 space-y-2 z-0">
+                <i class="fas fa-cloud-upload-alt text-4xl"></i>
+                <p class="font-medium">Click to browse or drag &amp; drop your image here</p>
+                <p class="text-sm text-indigo-500">Only one image allowed at a time</p>
+            </div>
+    
+            <!-- Image Preview -->
+            <div id="previewWrapper"
+                class="absolute inset-0 flex items-center justify-center hidden z-10 bg-white bg-opacity-90">
+                <img id="imagePreview" class="max-h-[90%] max-w-[90%] object-contain rounded-xl shadow">
+            </div>
+    
+            <!-- Hidden File Input -->
+            <input type="file" id="imageInput" accept="image/*" class="hidden">
+        </div>
+
+        <!-- Start Analyzing Button -->
+        <div id="analyzeBtnWrapper" class="mt-5 hidden flex items-center justify-end gap-4">
+            <!-- Remove Button -->
+            <button onclick="removeImage(event)"
+                class="inline-flex items-center gap-2 px-4 py-2 text-sm text-red-600 bg-white border border-red-200 rounded-lg hover:bg-red-50 transition-all shadow-sm"
+                title="Remove Image">
+                <i class="fas fa-trash-alt"></i>
+                Remove
+            </button>
+    
+            <!-- Analyze Button -->
+            <button onclick="startAnalysis()"
+                class="inline-flex items-center gap-2 px-5 py-2.5 text-sm text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 transition-all shadow-sm">
+                <i class="fas fa-play mt-[3px]"></i>
+                Analyze
+            </button>
+        </div>
+    </div>
+
+</section>
+{% endblock content_area %}

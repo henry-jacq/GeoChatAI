@@ -1,0 +1,63 @@
+<!-- Sidebar -->
+<aside id="sidebar"
+    class="fixed inset-y-0 left-0 z-40 flex flex-col w-64 transition-transform duration-300 ease-in-out -translate-x-full bg-white border-r select-none lg:translate-x-0">
+    <nav class="flex flex-col h-full bg-white">
+        <div class="flex items-center justify-center p-[20px] bg-white border-b space-x-4 text-gray-700">
+            <i class="fa fa-globe text-xl text-gray-600"></i>
+            <p class="ml-3 text-xl font-semibold text-gray-700 font-heading">GeoChatAI</p>
+        </div>
+
+        <div class="flex-1 px-2 overflow-y-auto scroll-smooth scrollbar scrollbar-hide">
+            <ul class="mt-4">
+                <li class="my-1">
+                    <a href="{{ url_for('main.home') }}"
+                        class="flex items-center px-5 py-3 rounded-xl transition duration-200
+                            {% if not cid %}
+                                bg-indigo-100 text-indigo-600
+                            {% else %}
+                                bg-gray-100 text-gray-600 hover:bg-gray-200
+                            {% endif %}">
+                        <div class="flex items-center justify-between w-full">
+                            <div class="flex items-center space-x-4 font-medium">
+                                <i class="fas fa-plus text-xs"></i>
+                                <span>Start Chat</span>
+                            </div>
+                        </div>
+                    </a>
+                </li>
+            </ul>
+            <h4 class="px-2 mt-6 text-xs font-semibold text-gray-600 uppercase">Chat History</h4>
+            <ul class="mt-2">
+                {% for chat_id, chat_title in chats %}
+                    <li class="my-1">
+                        <a href="{{ url_for('main.chatBox', cid=chat_id) }}"
+                        class="flex items-center px-4 py-3 rounded-md transition duration-200
+                        {% if cid == chat_id %}
+                            bg-indigo-100 text-indigo-600
+                        {% else %}
+                            text-gray-600 hover:bg-gray-50
+                        {% endif %}">
+                            <span class="truncate whitespace-nowrap overflow-hidden w-full">{{ chat_title }}</span>
+                        </a>
+                    </li>
+                {% else %}
+                <li class="flex justify-center my-16 text-sm px-4 text-gray-400 italic">
+                    No chats yet.
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+        <div class="p-2 border-t">
+            <button
+                class="w-full flex items-center p-2 rounded-md transition focus:outline-none focus:ring-2 focus:ring-indigo-500 text-gray-600 hover:bg-gray-100"
+                onclick="window.location.href='#';" title="Go to Settings">
+                <img src="https://ui-avatars.com/api/?name=Guest User&amp;background=c7d2fe&amp;color=3730a3&amp;bold=true"
+                    alt="User Avatar" class="w-10 h-10 rounded-md">
+                <div class="ml-3 text-left truncate">
+                    <h4 class="font-semibold text-gray-800">Guest User</h4>
+                    <span class="text-sm text-gray-500">guest@gmail.com</span>
+                </div>
+            </button>
+        </div>
+    </nav>
+</aside>
