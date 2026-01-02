@@ -60,3 +60,5 @@ python run.py
 
 Navigate to `http://localhost:5000` (or the port specified in your config).
 
+
+![Sample captioning result](sample.png)
